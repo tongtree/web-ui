@@ -1,5 +1,7 @@
 import pdb
 import logging
+import time
+import webbrowser
 
 from dotenv import load_dotenv
 
@@ -1195,8 +1197,20 @@ def main():
     args = parser.parse_args()
 
     demo = create_ui(theme_name=args.theme)
-    demo.launch(server_name=args.ip, server_port=args.port)
 
+    # 非阻塞启动
+    demo.launch(server_name=args.ip, server_port=args.port,  prevent_thread_lock=True)
+
+    # 等待服务启动后，打开浏览器
+    time.sleep(1)
+    webbrowser.open(f"http://{args.ip}:{args.port}")
+
+    # 阻止脚本退出
+    try:
+        while True:
+            time.sleep(100)
+    except KeyboardInterrupt:
+        print("服务已手动关闭")
 
 if __name__ == '__main__':
     main()
