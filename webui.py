@@ -1190,6 +1190,30 @@ def create_ui(theme_name="Ocean"):
 
 
 def main():
+    import os
+    import sys
+    from dotenv import load_dotenv
+
+    def resource_path(relative_path):
+        """获取资源文件的绝对路径（兼容开发环境和打包环境）"""
+        if hasattr(sys, '_MEIPASS'):
+            # PyInstaller 打包后，资源文件会被解压到 sys._MEIPASS
+            base_path = sys._MEIPASS
+        else:
+            # 开发环境，资源文件与脚本在同一目录
+            base_path = os.path.abspath(".")
+        return os.path.join(base_path, relative_path)
+
+    # 动态加载 .env 文件
+    dotenv_path = resource_path(".env")
+    print("Loading .env from:", dotenv_path)  # 调试：打印路径
+    if os.path.exists(dotenv_path):
+        print("File exists.")
+    else:
+        print("File does not exist!")
+
+    # 加载 .env 文件
+    load_dotenv(dotenv_path)
     parser = argparse.ArgumentParser(description="Gradio UI for Browser Agent")
     parser.add_argument("--ip", type=str, default="127.0.0.1", help="IP address to bind to")
     parser.add_argument("--port", type=int, default=7788, help="Port to listen on")
